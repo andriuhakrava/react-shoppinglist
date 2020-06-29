@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ShoppingList</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+</head>
+<body>
+	<div id="app"></div>
+	<script type="text/babel">
+
+		class App extends React.Component {
+			constructor(props){
+				super(props);
+				this.state = {
+					buyItems: ['milk', 'bread', 'fruit'],
+					message: ''
+				}
+			}
+
+			addItem(e){
+				e.preventDefault();
+				const { buyItems } = this.state;
+				const newItem = this.newItem.value;
+
+				if (buyItems.includes(newItem)){
+					this.setState({
+						message: 'This item is already on the list.'
+					})
+				} else if (newItem !== '') {
+					this.setState({
+						buyItems: [...this.state.buyItems, newItem],
+						message: '',
+					});	
+				} else if (newItem === ''){
+					this.setState({
+						message: 'Enter some buy item, form input should not be empty!'
+					})
+				}
+				
+				this.addForm.reset();
+			}
+
+			removeItem(item){
+				const newBuyItems = this.state.buyItems.filter(buyItem => buyItem !== item);
+				this.setState({
+					buyItems: [...newBuyItems]
+				})
+				if (!newBuyItems.length) this.setState({ message: 'No items in your list.' })
+			}
+
+			clearAll(){
+				this.setState({
+					buyItems: [],
+					message: 'No items in your list.'
+				})
+			}
+
+			render(){
+				const {buyItems, message} = this.state;
+				return (
+					<div className="container">
+						<header>
+							<h1>Shopping List</h1>
+							<form className="form-inline my-4" onSubmit={(e) => this.addItem(e)}
+														ref={input => this.addForm = input} >
+								<div className="form-group">
+									<label className="sr-only" htmlFor="newItem">Add New Item</label>
+									<input type="text" ref={input => this.newItem = input} 
+										placeholder="Bread" id="newItem" className="form-control" />
+								</div>
+								<button className="btn btn-primary" type="submit">Add</button>
+							</form>
+						</header>
+						<div className="content">
+						{message ? <p className="message text-danger">{message}</p> : ''}
+						{buyItems.length > 0 ? 	
+							<table className="table table-dark">
+								<thead>
+									<tr>
+										<th>*</th>
+										<th>Item</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{ buyItems.map((item, index) => {
+										return (
+											<tr key={item}>
+												<td>1</td>
+												<td>{ item }</td>
+												<td className="text-right">
+													<button className="btn btn-small btn-danger" 
+																	onClick={(e) => this.removeItem(item)}>
+														Remove
+													</button>
+												</td>
+											</tr>
+										)
+									}) }
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="2">&nbsp;</td>
+										<td className="text-right">
+											<button className="btn btn-default btn-sm btn-warning" 
+															onClick={(e) => this.clearAll()}>
+												Clear List
+											</button>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						: '' }
+						</div>
+					</div>
+				)
+			}
+		}
+
+		ReactDOM.render(<App />, document.getElementById('app'));
+	</script>
+</body>
+</html>	
